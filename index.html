@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lead RT Reference & Responsibility Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F7F6;
+    --paper-panel:#FFFFFF;
+    --ink:#1B2A2E;
+    --ink-soft:#4B5D61;
+    --line:#D8DEDC;
+    --staffing:#2A5C8A;
+    --staffing-tint:#E7EFF6;
+    --equipment:#2E7D46;
+    --equipment-tint:#E7F2EA;
+    --contacts:#9A6B08;
+    --contacts-tint:#F5EEDD;
+    --emergency:#B23A2E;
+    --emergency-tint:#FBEAE8;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+  h1,h2,h3,.tab-label,.eyebrow{
+    font-family:'Barlow Condensed', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+
+  .app{
+    display:flex;
+    min-height:100vh;
+  }
+
+  /* ---------- SIDEBAR / BINDER TABS ---------- */
+  .sidebar{
+    width:230px;
+    flex-shrink:0;
+    background:var(--paper);
+    border-right:2px solid var(--ink);
+    padding:28px 0 28px 0;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .brand{
+    padding:0 22px 22px 22px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:18px;
+  }
+  .brand .eyebrow{
+    font-size:12px;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  .brand h1{
+    font-size:22px;
+    line-height:1.05;
+    margin:6px 0 0 0;
+    font-weight:700;
+  }
+  .site-picker{
+    padding:16px 18px 20px 22px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:18px;
+  }
+  .site-picker label{
+    display:block;
+    font-family:'Barlow Condensed', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .site-picker select{
+    width:100%;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+    background:var(--paper-panel);
+    border:2px solid var(--ink);
+    border-radius:4px;
+    padding:8px 10px;
+    cursor:pointer;
+  }
+  nav.tabs{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding-right:18px;
+  }
+  .tab{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--paper-panel);
+    border:2px solid var(--ink);
+    border-left:none;
+    border-radius:0 6px 6px 0;
+    padding:12px 14px 12px 16px;
+    margin-left:0;
+    cursor:pointer;
+    font-family:'Barlow Condensed', sans-serif;
+    font-size:16px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--ink);
+    text-transform:uppercase;
+    transition:transform .12s ease, padding-left .12s ease;
+  }
+  .tab .swatch{
+    width:14px;
+    height:26px;
+    border-radius:2px;
+    flex-shrink:0;
+    border:1px solid rgba(0,0,0,0.25);
+  }
+  .tab[data-cat="home"] .swatch{background:var(--ink);}
+  .tab[data-cat="staffing"] .swatch{background:var(--staffing);}
+  .tab[data-cat="equipment"] .swatch{background:var(--equipment);}
+  .tab[data-cat="contacts"] .swatch{background:var(--contacts);}
+  .tab[data-cat="emergency"] .swatch{background:var(--emergency);}
+
+  .tab:hover{padding-left:22px;}
+  .tab.active{
+    padding-left:22px;
+    transform:translateX(4px);
+    box-shadow:3px 3px 0 var(--ink);
+  }
+
+  .sidebar-foot{
+    padding:22px 22px 0 22px;
+    margin-top:22px;
+    border-top:1px solid var(--line);
+  }
+  .print-btn{
+    width:100%;
+    font-family:'Barlow Condensed', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    font-weight:700;
+    font-size:14px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:4px;
+    padding:11px 12px;
+    cursor:pointer;
+  }
+  .print-btn:hover{opacity:0.85;}
+  .rev-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:12px;
+    line-height:1.5;
+  }
+
+  /* ---------- MAIN ---------- */
+  main{
+    flex:1;
+    padding:44px 56px 80px 56px;
+    max-width:920px;
+  }
+  .section{display:none;}
+  .section.active{display:block;}
+
+  .cat-eyebrow{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    padding:4px 10px;
+    display:inline-block;
+    border-radius:3px;
+    margin-bottom:10px;
+  }
+  .section[data-cat="staffing"] .cat-eyebrow{background:var(--staffing-tint); color:var(--staffing);}
+  .section[data-cat="equipment"] .cat-eyebrow{background:var(--equipment-tint); color:var(--equipment);}
+  .section[data-cat="contacts"] .cat-eyebrow{background:var(--contacts-tint); color:var(--contacts);}
+  .section[data-cat="emergency"] .cat-eyebrow{background:var(--emergency-tint); color:var(--emergency);}
+
+  .section h2{
+    font-size:34px;
+    margin:0 0 4px 0;
+    font-weight:700;
+    border-bottom:3px solid var(--ink);
+    padding-bottom:12px;
+  }
+  .section > .dek{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin:12px 0 30px 0;
+    max-width:60ch;
+  }
+
+  .block{
+    margin-bottom:34px;
+  }
+  .block h3{
+    font-size:23px;
+    font-weight:600;
+    margin:0 0 12px 0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .block h3::before{
+    content:"";
+    width:10px;height:10px;
+    border-radius:2px;
+    display:inline-block;
+  }
+  .section[data-cat="staffing"] .block h3::before{background:var(--staffing);}
+  .section[data-cat="equipment"] .block h3::before{background:var(--equipment);}
+  .section[data-cat="contacts"] .block h3::before{background:var(--contacts);}
+  .section[data-cat="emergency"] .block h3::before{background:var(--emergency);}
+
+  .note{
+    font-size:13px;
+    color:var(--ink-soft);
+    font-style:italic;
+    margin:0 0 10px 0;
+  }
+  .site-flag{
+    font-family:'IBM Plex Mono', monospace;
+    text-transform:none;
+    letter-spacing:0;
+    font-size:10.5px;
+    font-weight:500;
+    color:var(--ink-soft);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:2px 7px;
+    margin-left:6px;
+    vertical-align:middle;
+  }
+
+  .info-note{
+    margin:14px 0 0 0;
+    border:1.5px solid #B8860B;
+    background:#FFFBEE;
+    border-radius:5px;
+    padding:12px 16px;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .info-note strong{color:#8A6200;}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--paper-panel);
+    font-size:14px;
+  }
+  caption{text-align:left; caption-side:top;}
+  th,td{
+    border:1px solid var(--line);
+    padding:9px 10px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    font-family:'Barlow Condensed', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:var(--paper);
+  }
+  td.editable, .fill{
+    color:#9AA6A5;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+  }
+  tr:nth-child(even) td{background:#FBFCFC;}
+
+  ol.steps{
+    counter-reset:step;
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+  ol.steps li{
+    counter-increment:step;
+    position:relative;
+    padding:10px 14px 10px 46px;
+    margin-bottom:6px;
+    background:var(--paper-panel);
+    border:1px solid var(--line);
+    border-left:4px solid var(--ink);
+    border-radius:0 4px 4px 0;
+    font-size:14.5px;
+  }
+  .section[data-cat="staffing"] ol.steps li{border-left-color:var(--staffing);}
+  .section[data-cat="equipment"] ol.steps li{border-left-color:var(--equipment);}
+  .section[data-cat="contacts"] ol.steps li{border-left-color:var(--contacts);}
+  .section[data-cat="emergency"] ol.steps li{border-left-color:var(--emergency);}
+  ol.steps li::before{
+    content:counter(step);
+    position:absolute;
+    left:12px; top:50%;
+    transform:translateY(-50%);
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+
+  ul.checklist{list-style:none; margin:0; padding:0;}
+  ul.checklist li{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:7px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14.5px;
+  }
+  ul.checklist input[type=checkbox]{
+    appearance:none;
+    -webkit-appearance:none;
+    width:16px; height:16px;
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    margin-top:2px;
+    flex-shrink:0;
+  }
+  ul.checklist input[type=checkbox]:checked{background:var(--ink);}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  .callout{
+    border:1.5px solid var(--emergency);
+    background:var(--emergency-tint);
+    color:var(--ink);
+    border-radius:5px;
+    padding:14px 16px;
+    font-size:14px;
+    margin-bottom:22px;
+  }
+  .callout strong{color:var(--emergency);}
+
+  /* Home / cover */
+  .cover-title{font-size:42px; line-height:1.02; margin:0 0 6px 0;}
+  .cover-sub{color:var(--ink-soft); font-size:16px; margin:0 0 30px 0; max-width:56ch;}
+  .facility-line{
+    font-family:'Barlow Condensed', sans-serif;
+    font-size:22px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    color:var(--ink);
+    border-top:2px solid var(--ink);
+    border-bottom:2px solid var(--ink);
+    padding:12px 0;
+    margin-bottom:34px;
+    display:flex; gap:36px; flex-wrap:wrap;
+    align-items:baseline;
+  }
+  .facility-line .fill{
+    color:var(--staffing);
+  }
+  .facility-line-label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-right:8px;
+  }
+  .toc{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .toc-card{
+    border:2px solid var(--ink);
+    border-radius:6px;
+    padding:18px 18px 16px 18px;
+    cursor:pointer;
+    background:var(--paper-panel);
+  }
+  .toc-card:hover{box-shadow:4px 4px 0 var(--ink); transform:translate(-2px,-2px);}
+  .toc-card .swatch{width:100%; height:6px; border-radius:3px; margin-bottom:12px;}
+  .toc-card[data-cat="staffing"] .swatch{background:var(--staffing);}
+  .toc-card[data-cat="equipment"] .swatch{background:var(--equipment);}
+  .toc-card[data-cat="contacts"] .swatch{background:var(--contacts);}
+  .toc-card[data-cat="emergency"] .swatch{background:var(--emergency);}
+  .toc-card h3{font-size:20px; margin:0 0 6px 0; font-weight:700;}
+  .toc-card p{font-size:13.5px; color:var(--ink-soft); margin:0;}
+
+  @media (max-width:820px){
+    .app{flex-direction:column;}
+    .sidebar{position:relative; width:100%; height:auto; border-right:none; border-bottom:2px solid var(--ink);}
+    nav.tabs{flex-direction:row; flex-wrap:wrap; padding-right:22px; padding-left:22px;}
+    .tab{border-left:2px solid var(--ink); border-radius:6px;}
+    main{padding:30px 22px 60px 22px;}
+    .grid-2{grid-template-columns:1fr;}
+    .toc{grid-template-columns:1fr;}
+  }
+
+  /* ---------- PRINT ---------- */
+  @media print{
+    body{background:#fff;}
+    .sidebar{display:none;}
+    main{max-width:100%; padding:0 6mm;}
+    .section{display:block !important; page-break-after:always;}
+    .section:last-child{page-break-after:auto;}
+    .toc-card, .tab{cursor:default; box-shadow:none !important; transform:none !important;}
+    table{font-size:12px;}
+    a{color:inherit; text-decoration:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="eyebrow">Respiratory Therapy · Lead Reference</div>
+      <h1>Responsibility &amp; Reference Guide</h1>
+    </div>
+    <div class="site-picker">
+      <label for="siteSelect">Site</label>
+      <select id="siteSelect" onchange="switchSite(this.value)">
+        <option value="orange">Orange</option>
+        <option value="irvine">Irvine</option>
+        <option value="fountainValley">Fountain Valley</option>
+        <option value="lakewood">Lakewood</option>
+        <option value="losAlamitos">Los Alamitos</option>
+        <option value="placentiaLinda">Placentia Linda</option>
+      </select>
+    </div>
+    <nav class="tabs">
+      <div class="tab active" data-cat="home" onclick="showSection('home', this)">
+        <span class="swatch"></span> Overview
+      </div>
+      <div class="tab" data-cat="staffing" onclick="showSection('staffing', this)">
+        <span class="swatch"></span> Daily Staffing
+      </div>
+      <div class="tab" data-cat="equipment" onclick="showSection('equipment', this)">
+        <span class="swatch"></span> Equipment
+      </div>
+      <div class="tab" data-cat="contacts" onclick="showSection('contacts', this)">
+        <span class="swatch"></span> Hospital Contacts
+      </div>
+      <div class="tab" data-cat="emergency" onclick="showSection('emergency', this)">
+        <span class="swatch"></span> Emergency Protocols
+      </div>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="print-btn" onclick="window.print()">Print full guide</button>
+      <div class="rev-line">
+        FACILITY: <span id="revFacility">[fill in]</span><br>
+        VERSION: 0.1 — DRAFT FRAMEWORK<br>
+        LAST REVISED: [fill in]<br>
+        OWNER: [Lead RT name]
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ============ HOME / COVER ============ -->
+    <section class="section active" data-cat="home" id="home">
+      <div class="cover-title">Lead Respiratory Therapist</div>
+      <div class="cover-sub">Responsibility &amp; reference guide covering daily staffing, equipment, hospital contacts, and emergency protocols. Built to be navigated on shift and printed as a binder handout.</div>
+      <div class="facility-line">
+        <span class="facility-line-label">Site</span><span class="fill" id="homeSiteName">[fill in]</span>
+      </div>
+
+      <div class="toc">
+        <div class="toc-card" data-cat="staffing" onclick="showSection('staffing', document.querySelector('.tab[data-cat=staffing]'))">
+          <div class="swatch"></div>
+          <h3>Daily Staffing</h3>
+        </div>
+        <div class="toc-card" data-cat="equipment" onclick="showSection('equipment', document.querySelector('.tab[data-cat=equipment]'))">
+          <div class="swatch"></div>
+          <h3>Equipment</h3>
+        </div>
+        <div class="toc-card" data-cat="contacts" onclick="showSection('contacts', document.querySelector('.tab[data-cat=contacts]'))">
+          <div class="swatch"></div>
+          <h3>Hospital Contacts</h3>
+        </div>
+        <div class="toc-card" data-cat="emergency" onclick="showSection('emergency', document.querySelector('.tab[data-cat=emergency]'))">
+          <div class="swatch"></div>
+          <h3>Emergency Protocols</h3>
+        </div>
+      </div>
+
+      <div class="block" style="margin-top:34px;">
+        <h3>Shift Checklist</h3>
+        <ul class="checklist">
+          <li><input type="checkbox"> All units are assigned for upcoming shift.</li>
+          <li><input type="checkbox"> Equipment levels are adequate.</li>
+          <li><input type="checkbox"> Dirty equipment levels are not overwhelming.</li>
+        </ul>
+      </div>
+
+      <div class="block" style="margin-top:34px;">
+        <h3>Responsibilities During Shift</h3>
+        <ul style="margin:0; padding-left:22px; line-height:1.8;">
+          <li>Assist staff with transports, new admits, bedside procedures, and be available as a clinical resource.</li>
+          <li>Ensure staff clock out and take their breaks prior to the 5-hour mark.</li>
+          <li>Provide patient care, direct and prioritize daily workflows; ensures adequate staffing problem resolutions.</li>
+          <li>Create the next shift work schedule to ensure proper coverage for all patient care areas.</li>
+          <li>Ensure equipment levels are maintained. Clean and set up equipment as needed.</li>
+          <li>Responsible and accountable for providing quality patient care and customer service.</li>
+          <li>Identify any risk management, patient, and/or hospital safety issues and take steps to resolve.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ DAILY STAFFING ============ -->
+    <section class="section" data-cat="staffing" id="staffing">
+      <span class="cat-eyebrow">01 — Daily Staffing</span>
+      <h2>Daily Staffing</h2>
+      <p class="dek">Shift coverage, ratio targets, huddle routine, and what to do when staffing drops below target.</p>
+
+      <div class="block" id="genericShiftBlock">
+        <h3>Shift Coverage Matrix <span class="site-flag">site-specific</span></h3>
+        <div id="shiftGridImageWrap" style="display:none;"></div>
+      </div>
+
+      <div class="block">
+        <h3>Staffing Guidelines <span class="site-flag">site-specific</span></h3>
+        <table id="ratiosTable">
+          <thead><tr><th>Unit</th><th>Target Ratio</th><th>Escalation Trigger</th></tr></thead>
+          <tbody id="ratiosBody"></tbody>
+        </table>
+        <div id="staffingGuidelinesText" style="display:none;"></div>
+      </div>
+
+      <div class="block">
+        <h3>Canceling Guidelines <span class="site-flag">site-specific</span></h3>
+        <div id="cancelGuidelinesText"><p class="note">[No cancellation guidelines added yet for this site.]</p></div>
+      </div>
+
+      <div class="block">
+        <h3>Low-Staffing Escalation Steps <span class="site-flag">site-specific</span></h3>
+        <div id="escalationStepsContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ EQUIPMENT ============ -->
+    <section class="section" data-cat="equipment" id="equipment">
+      <span class="cat-eyebrow">02 — Equipment</span>
+      <h2>Equipment</h2>
+      <p class="dek">Rounds checklist, inventory par levels, preventive maintenance schedule, and first-line troubleshooting.</p>
+
+      <div class="block">
+        <h3>Equipment Rounds Checklist <span class="site-flag">site-specific</span></h3>
+        <div id="equipmentRoundsContent"></div>
+      </div>
+
+      <div class="block" id="equipmentVendorBlock" style="display:none;">
+        <h3>Equipment Vendor Contacts <span class="site-flag">site-specific</span></h3>
+        <table>
+          <thead><tr><th>Vendor</th><th>Phone</th><th>Notes</th></tr></thead>
+          <tbody id="equipmentVendorBody"></tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <h3>Troubleshooting Quick Reference <span class="site-flag">shared</span></h3>
+        <div id="troubleshootingContent"></div>
+      </div>
+
+      <div class="block">
+        <h3>Submitting a Ticket</h3>
+        <p>To report any IT issues, EPIC issues, broken phones, pagers, or any other electronics, please utilize the link below. Ensure you select the area related to your issue so the correct person gets the ticket. Fill out all information requested. After submitting, you will get a ticket number. Please email the supervisors with the issue and the ticket number so they can follow up if needed.</p>
+        <p><a href="https://ucihealth.service-now.com/itportal" target="_blank" rel="noopener" style="color:var(--equipment); font-weight:700; font-size:17px;">Click here to submit an IT ticket →</a></p>
+        <p><a href="https://fac.hs.uci.edu/mc_web/onsite/loginHub" target="_blank" rel="noopener" style="color:var(--equipment); font-weight:700; font-size:17px;">Click here to submit a facilities ticket →</a></p>
+        <p><a href="https://uc-v2.teamnetsoftware.com/public-request/c42c88d5-22db-4552-baa5-ca80e617b6e1/location-lookup/true" target="_blank" rel="noopener" style="color:var(--equipment); font-weight:700; font-size:17px;">Click here to submit a biomed ticket - select your site 1st →</a></p>
+      </div>
+    </section>
+
+    <!-- ============ HOSPITAL CONTACTS ============ -->
+    <section class="section" data-cat="contacts" id="contacts">
+      <span class="cat-eyebrow">03 — Hospital Contacts</span>
+      <h2>Hospital Contacts</h2>
+      <p class="dek">Directory grouped by who you'd call and why. Keep pager/cell numbers current — this page is the one most worth double-checking each revision.</p>
+
+      <div class="block">
+        <h3>Hospital Support <span class="site-flag">site-specific</span></h3>
+        <table>
+          <thead><tr><th>Role</th><th>Pager / Cell</th></tr></thead>
+          <tbody id="onunitBody"></tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <h3>Equipment Contacts <span class="site-flag">site-specific</span></h3>
+        <table>
+          <thead><tr><th>Company / Dept</th><th>Phone</th><th>Covers</th></tr></thead>
+          <tbody id="biomedBody"></tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <h3>System Contacts <span class="site-flag">shared</span></h3>
+        <p class="note">Same across sites — edit once here to update everywhere.</p>
+        <table>
+          <tr><th>Role</th><th>Name</th><th>Ext. / Phone</th></tr>
+          <tr><td class="editable">Clinical Educator</td><td class="editable">Daniel Irvin</td><td class="editable">irvind@hs.uci.edu</td></tr>
+          <tr><td class="editable">Clinical Educator</td><td class="editable">Jared Klotz</td><td class="editable">jaklotz@hs.uci.edu</td></tr>
+          <tr><td class="editable">Irvine Lead</td><td class="editable"></td><td class="editable">657-579-5568</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ EMERGENCY PROTOCOLS ============ -->
+    <section class="section" data-cat="emergency" id="emergency">
+      <span class="cat-eyebrow">04 — Emergency Protocols</span>
+      <h2>Emergency Protocols</h2>
+      <p class="dek">Role-specific steps for the moments where the guide needs to work at a glance. Verify every step against current hospital policy.</p>
+
+      <p><a href="https://rl6-4.rlsolutions.com/UCI_Production/Homecenter/Client/Home.aspx" target="_blank" rel="noopener" style="color:var(--emergency); font-weight:600;">SQIS homepage →</a></p>
+
+      <div class="block" style="margin-bottom:20px;">
+        <h3>All Code and Emergency Response Procedures</h3>
+        <p style="margin:0 0 6px 0;"><a href="https://healthuci.sharepoint.com/sites/EHS/SitePages/UCI_Medical_Center_ERG_Inpatient_Orange.aspx" target="_blank" rel="noopener" style="color:var(--emergency); font-weight:700; font-size:17px;">UCI Emergency Response Guide →</a></p>
+        <p class="note" style="margin:0;">Detailed reference for procedures and protocols can be found here.</p>
+      </div>
+
+      <div class="block">
+        <h3>Staff Injury During Shift</h3>
+        <p>Co-workers must go to Occupational Health (if Occupational Health is closed, they must go to the ED). A SQIS is to be filled out with all details of the injury.</p>
+      </div>
+
+      <div class="block">
+        <h3>Internal Disaster</h3>
+        <p style="font-weight:600; margin:0 0 6px 0;">On notification of Code Triage</p>
+        <ol class="steps">
+          <li>Report immediately to your department for further instructions.</li>
+          <li>Keep phones and pagers clear for disaster-related communication only.</li>
+          <li>Determine staffing needs — who's needed and who can be spared for other duties.</li>
+          <li>On-duty staff check in with their department head/manager for updates; off-duty staff contact their supervisor/chair if possible.</li>
+          <li>Activate the department's staff recall list as needed. Recalled staff enter through the main lobby and must bring their hospital ID badge.</li>
+        </ol>
+        <p style="font-weight:600; margin:16px 0 6px 0;">If the disaster involves possible damage to the hospital structure</p>
+        <ol class="steps">
+          <li>Account for all staff known to be in your area before the event.</li>
+          <li>Starting at one end of the area, check every room for injured persons, physical damage, or safety hazards — using safe search practices throughout.</li>
+          <li>Check for water leaks, fire/smoke, gas odor, structural damage, or other hazards.</li>
+          <li>Escort injured persons to the Triage Area; notify the Triage Area Coordinator of anyone who can't be moved.</li>
+          <li>Cordon off any areas felt to be unsafe.</li>
+          <li>Once all injured have been attended to, begin clean-up.</li>
+        </ol>
+        <p style="font-weight:600; margin:16px 0 6px 0;">On "Code Triage: All Clear"</p>
+        <p style="margin:0;">Return to your home department and debrief with your supervisor. Return all deployed equipment and supplies to their designated storage locations as demobilization wraps up.</p>
+      </div>
+
+      <div class="block">
+        <h3>External Disaster</h3>
+        <p style="font-weight:600; margin:0 0 6px 0;">On notification of Code Triage</p>
+        <ol class="steps">
+          <li>Report immediately to your department for further instructions.</li>
+          <li>Keep phones and pagers clear for disaster-related communication only.</li>
+          <li>Determine staffing needs — who's needed and who can be spared for other duties.</li>
+          <li>On-duty staff check in with their department head/manager for updates; off-duty staff contact their supervisor/chair if possible.</li>
+          <li>Activate the department's staff recall list as needed. Recalled staff enter through the main lobby and must bring their hospital ID badge.</li>
+        </ol>
+        <p style="font-weight:600; margin:16px 0 6px 0;">On "Code Triage: All Clear"</p>
+        <p style="margin:0;">Return to your home department and debrief with your supervisor. Return all deployed equipment and supplies to their designated storage locations as demobilization wraps up.</p>
+      </div>
+
+      <div class="block">
+        <h3>Equipment Failure on Patient</h3>
+        <p style="margin:0 0 12px 0;">Remove the equipment from service, tag or label to prevent further use.</p>
+        <ul style="margin:0; padding-left:22px; line-height:1.8;">
+          <li>Don't change the equipment settings.</li>
+          <li>Save any consumable items used with the equipment.</li>
+          <li>Notify your Supervisor.</li>
+          <li>Complete an Incident Report.</li>
+          <li>Report equipment to Biomedical Engineering (714-456-5366).</li>
+          <li>Provide the following information:
+            <ul style="margin-top:4px;">
+              <li>Location of equipment</li>
+              <li>Equipment type and model number</li>
+              <li>Equipment number (Biomed#)</li>
+              <li>Your name and extension</li>
+              <li>Description of failure/malfunction</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h3>Downtime Procedure</h3>
+        <p><a href="https://healthuci.sharepoint.com/sites/uciemr/Shared%20Documents/Forms/AllItems.aspx?viewid=c81cdcaa%2D0dd0%2D4c5b%2Da0b6%2D881494714f6a&id=%2Fsites%2FUCIEMR%2FShared%20Documents%2FUCSD%2DUCIEMR%2FEpic%20Training%20Material%2DUCSD%2DUCIEMR%2FDowntime%20Procedures%2FDT%20Attachment%20A%2EDowntime%20Inpatient%20Nov%202018%2Epdf&parent=%2Fsites%2FUCIEMR%2FShared%20Documents%2FUCSD%2DUCIEMR%2FEpic%20Training%20Material%2DUCSD%2DUCIEMR%2FDowntime%20Procedures" target="_blank" rel="noopener" style="color:var(--emergency); font-weight:700; font-size:17px;">Click for downtime procedure Before, During and after downtime →</a></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  function showSection(cat, tabEl){
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(cat).classList.add('active');
+    if(tabEl){
+      tabEl.classList.add('active');
+    } else {
+      document.querySelector('.tab[data-cat="'+cat+'"]').classList.add('active');
+    }
+    window.scrollTo(0,0);
+  }
+
+  // ---------- SITE DATA ----------
+  // Edit this object to fill in real values for each site. Structure is
+  // identical across sites on purpose — copy a block and swap the values
+  // when a 7th site gets added.
+  const SHARED_TROUBLESHOOTING = `
+        <p style="margin:0 0 12px 0;">Reference the tip page first, utilize QR code.</p>
+        <img src="data:image/png;base64,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" alt="Equipment troubleshooting QR code" style="width:140px; height:auto; border:1px solid var(--line); border-radius:4px; display:block; margin-bottom:14px;">
+        <p style="margin:8px 0 14px 0;"><a href="https://healthuci.sharepoint.com/sites/GRP-rcssystem/SitePages/UCI-EDUCATION-HUB.aspx" target="_blank" rel="noopener" style="color:var(--equipment); font-weight:700; font-size:16px;">System Education Hub →</a></p>
+        <div class="info-note">Reach out to supervisors or educators with further equipment questions or concerns.</div>
+      `;
+
+  const SITES = {
+    orange: {
+      name: "Orange",
+      facility: "[Facility name]",
+      shiftContent: [
+        { type:"image", src: "data:image/png;base64,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", caption: "Fill in procedure count for each area. Treatments are not counted when given through an Aerogen." },
+        { type:"note", text: "Do not enter values into the <strong>orange-highlighted cells</strong>." },
+        { type:"image", src: "data:image/png;base64,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", caption: "The blue Vent Count box will auto-fill — no need to put values here. Please fill in incoming/outgoing lead. In the yellow Staff Needed box, Adults will auto-populate. Input needed: NICU staff per census in unit, and account for the 1 ED person. The Total Staffed box is calculated as a rough gauge of staffing needs.", layout: "side" }
+      ],
+      staffingGuidelinesText: `
+        <ul style="margin:0; padding-left:22px; line-height:1.7;">
+          <li>Mid-shift, get a count from staff to fill in procedure counts and calculate needed staff for the upcoming shift.</li>
+          <li>Staffing should target 35–38 points per assignment with a 1:4 staff to vent count, as long as available staffing permits.</li>
+          <li>For Orientation shifts, please try to keep them lighter if possible. Reference the Orientation sheet to identify the preceptor and preferred placement for the shift.</li>
+          <li>All attempts to keep co-workers in the same area should be made.</li>
+          <li>Be sure to include any procedures, transports, or special patient notes.</li>
+          <li>Any pending cardiac surgeries are noted and assigned.</li>
+          <li>NICU pending procedures, deliveries, or transports are noted.</li>
+        </ul>
+      `,
+      cancelGuidelinesText: `
+        <ul style="margin:0 0 14px 0; padding-left:22px; line-height:1.7;">
+          <li>If canceling co-workers, please call them prior to 0430 / 1630.</li>
+          <li>Prior to cancelling, please reach out to Irvine for any staffing needs they may have.</li>
+        </ul>
+        <p style="font-weight:600; margin:0 0 6px 0;">Order of Cancellation</p>
+        <ol class="steps" style="margin:0;">
+          <li>Registry</li>
+          <li>OT</li>
+          <li>V-Day Request</li>
+          <li>Per Diem (based on per diem hours worked log)</li>
+        </ol>
+        <p style="font-weight:600; margin:16px 0 6px 0;">Order of Cancellation - Holiday</p>
+        <p class="note" style="margin:0;">[Add holiday cancellation order here.]</p>
+      `,
+      escalationStepsText: `
+        <ol class="steps">
+          <li>Confirm staff that are scheduled in API.</li>
+          <li>Reach out to Irvine supervisor to identify any extra staff they may be canceling.</li>
+          <li>Send out text to staff for interest in picking up.</li>
+          <li>Send email / call PRN.</li>
+        </ol>
+        <div class="info-note" style="margin-top:14px;">Reach out to supervisor with concerns or questions.</div>
+      `,
+      equipmentRoundsText: `
+        <p style="font-weight:600; margin:0 0 8px 0;">Ensure PAR level in RT workrooms</p>
+        <ul style="margin:0; padding-left:22px; line-height:1.8;">
+          <li>3 ventilators</li>
+          <li>2 BiPAPs</li>
+          <li>2 High Flows</li>
+          <li>IPV</li>
+          <li>iNO machines — at least 1 per floor, 2 on 6th/7th if able</li>
+        </ul>
+      `,
+      equipmentContacts: [
+        {org:"Servo", phone:"551-238-4631", notes:""},
+        {org:"Bunnell", phone:"800-800-4359", notes:"Call this number for Jet Rentals"},
+        {org:"Mallinckrodt (iNO)", phone:"877-566-7466", notes:"Tanks & extra machines — acct #2000177"},
+      ],
+      staffing: {
+        shifts: [
+          {shift:"0700–1900", zone:"[e.g., ICU]", rt:"[name]", relief:"[name]"},
+          {shift:"0700–1900", zone:"[e.g., Med-Surg]", rt:"[name]", relief:"[name]"},
+          {shift:"1900–0700", zone:"[e.g., ICU]", rt:"[name]", relief:"[name]"},
+        ],
+        ratios: [
+          {unit:"[e.g., ICU]", ratio:"[e.g., 1:6]", trigger:"[e.g., >1:8]"},
+          {unit:"[e.g., Med-Surg]", ratio:"[e.g., 1:12]", trigger:"[e.g., >1:16]"},
+        ]
+      },
+      contacts: {
+        onunit: [
+          {role:"RT Director", name:"[name]", ext:"[ext]", pager:"[#]"},
+          {role:"House Supervisor", name:"[name]", ext:"[ext]", pager:"714-506-6000"},
+          {role:"UCI Security", name:"", ext:"", pager:"714-456-5493"},
+          {role:"Facilities", name:"", ext:"", pager:"714-456-5700"},
+          {role:"Help Desk", name:"", ext:"", pager:"714-456-3333"},
+          {role:"Equipment Pool", name:"", ext:"", pager:"714-719-2210"},
+          {role:"EVS", name:"", ext:"", pager:"714-456-5494"},
+        ],
+        biomed: [
+          {org:"Biomed Engineering", name:"[name]", phone:"714-456-5366", covers:"[all equipment]"},
+          {org:"Servo", name:"", phone:"551-238-4631", covers:"[ventilators]"},
+          {org:"Bunnell", name:"", phone:"800-800-4359", covers:"Jet Rentals — call this number"},
+          {org:"Mallinckrodt (iNO)", name:"", phone:"877-566-7466", covers:"Tanks & extra machines — acct #2000177"},
+        ]
+      }
+    },
+    irvine: { name:"Irvine", facility:"[Facility name]",
+      staffing:{ shifts:[{shift:"0700–1900", zone:"[e.g., ICU]", rt:"[name]", relief:"[name]"},{shift:"0700–1900", zone:"[e.g., ED]", rt:"[name]", relief:"[name]"}], ratios:[{unit:"[e.g., ICU]", ratio:"[fill in]", trigger:"[fill in]"}] },
+      contacts:{ onunit:[{role:"RT Director", name:"[name]", ext:"[ext]", pager:"[#]"},{role:"House Supervisor", name:"[name]", ext:"[ext]", pager:"[#]"}], biomed:[{org:"Biomed Engineering", name:"[name]", phone:"[#]", covers:"[all equipment]"}] }
+    },
+    fountainValley: { name:"Fountain Valley", facility:"[Facility name]",
+      staffing:{ shifts:[{shift:"0700–1900", zone:"[fill in]", rt:"[name]", relief:"[name]"}], ratios:[{unit:"[fill in]", ratio:"[fill in]", trigger:"[fill in]"}] },
+      contacts:{ onunit:[{role:"RT Lead / Supervisor", name:"[name]", ext:"[ext]", pager:"[#]"}], biomed:[{org:"Biomed Engineering", name:"[name]", phone:"[#]", covers:"[all equipment]"}] }
+    },
+    lakewood: { name:"Lakewood", facility:"[Facility name]",
+      staffing:{ shifts:[{shift:"0700–1900", zone:"[fill in]", rt:"[name]", relief:"[name]"}], ratios:[{unit:"[fill in]", ratio:"[fill in]", trigger:"[fill in]"}] },
+      contacts:{ onunit:[{role:"RT Lead / Supervisor", name:"[name]", ext:"[ext]", pager:"[#]"}], biomed:[{org:"Biomed Engineering", name:"[name]", phone:"[#]", covers:"[all equipment]"}] }
+    },
+    losAlamitos: { name:"Los Alamitos", facility:"[Facility name]",
+      staffing:{ shifts:[{shift:"0700–1900", zone:"[fill in]", rt:"[name]", relief:"[name]"}], ratios:[{unit:"[fill in]", ratio:"[fill in]", trigger:"[fill in]"}] },
+      contacts:{ onunit:[{role:"RT Lead / Supervisor", name:"[name]", ext:"[ext]", pager:"[#]"}], biomed:[{org:"Biomed Engineering", name:"[name]", phone:"[#]", covers:"[all equipment]"}] }
+    },
+    placentiaLinda: { name:"Placentia Linda", facility:"[Facility name]",
+      staffing:{ shifts:[{shift:"0700–1900", zone:"[fill in]", rt:"[name]", relief:"[name]"}], ratios:[{unit:"[fill in]", ratio:"[fill in]", trigger:"[fill in]"}] },
+      contacts:{ onunit:[{role:"RT Lead / Supervisor", name:"[name]", ext:"[ext]", pager:"[#]"}], biomed:[{org:"Biomed Engineering", name:"[name]", phone:"[#]", covers:"[all equipment]"}] }
+    }
+  };
+
+  function renderStaffing(key){
+    const d = SITES[key].staffing;
+
+    const imgWrap = document.getElementById('shiftGridImageWrap');
+    if(SITES[key].shiftContent && SITES[key].shiftContent.length){
+      imgWrap.style.display = 'block';
+      imgWrap.innerHTML = SITES[key].shiftContent.map(g => {
+        if(g.type === 'note'){
+          return `<div class="info-note" style="margin-top:16px;">${g.text}</div>`;
+        }
+        return g.layout === 'side'
+        ? `<div style="margin-top:16px; display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
+             <img src="${g.src}" alt="Shift coverage reference" style="max-width:150px; width:100%; border:1px solid var(--line); border-radius:4px; display:block; flex-shrink:0;">
+             <p class="note" style="margin-top:0; flex:1; min-width:220px;">${g.caption || ''}</p>
+           </div>`
+        : `<div style="margin-top:16px;">
+             <img src="${g.src}" alt="Shift coverage reference" style="max-width:100%; border:1px solid var(--line); border-radius:4px; display:block;">
+             <p class="note" style="margin-top:8px;">${g.caption || ''}</p>
+           </div>`;
+      }).join('');
+    } else {
+      imgWrap.style.display = 'none';
+      imgWrap.innerHTML = '';
+    }
+
+    const ratiosTable = document.getElementById('ratiosTable');
+    const guidelinesText = document.getElementById('staffingGuidelinesText');
+    if(SITES[key].staffingGuidelinesText){
+      ratiosTable.style.display = 'none';
+      guidelinesText.style.display = 'block';
+      guidelinesText.innerHTML = SITES[key].staffingGuidelinesText;
+    } else {
+      ratiosTable.style.display = 'table';
+      guidelinesText.style.display = 'none';
+      document.getElementById('ratiosBody').innerHTML = d.ratios.map(r =>
+        `<tr><td class="editable">${r.unit}</td><td class="editable">${r.ratio}</td><td class="editable">${r.trigger}</td></tr>`
+      ).join('');
+    }
+
+    document.getElementById('cancelGuidelinesText').innerHTML = SITES[key].cancelGuidelinesText
+      || '<p class="note">[No cancellation guidelines added yet for this site.]</p>';
+
+    const defaultEscalation = `
+      <ol class="steps">
+        <li>[e.g., Confirm actual vs. scheduled staffing against ratio guidelines above]</li>
+        <li>[e.g., Attempt on-call / voluntary overtime list]</li>
+        <li>[e.g., Notify house supervisor / staffing office]</li>
+        <li>[e.g., Reassign coverage across zones per acuity]</li>
+        <li>[e.g., Escalate to RT director if unresolved by (time)]</li>
+      </ol>
+    `;
+    document.getElementById('escalationStepsContent').innerHTML = SITES[key].escalationStepsText || defaultEscalation;
+  }
+
+  function renderContacts(key){
+    const d = SITES[key].contacts;
+    document.getElementById('onunitBody').innerHTML = d.onunit.map(r =>
+      `<tr><td class="editable">${r.role}</td><td class="editable">${r.pager}</td></tr>`
+    ).join('');
+    document.getElementById('biomedBody').innerHTML = d.biomed.map(r =>
+      `<tr><td class="editable">${r.org}</td><td class="editable">${r.phone}</td><td class="editable">${r.covers}</td></tr>`
+    ).join('');
+  }
+
+  function renderEquipment(key){
+    const block = document.getElementById('equipmentVendorBlock');
+    const list = SITES[key].equipmentContacts;
+    if(list && list.length){
+      block.style.display = 'block';
+      document.getElementById('equipmentVendorBody').innerHTML = list.map(r =>
+        `<tr><td class="editable">${r.org}</td><td class="editable">${r.phone}</td><td class="editable">${r.notes || ''}</td></tr>`
+      ).join('');
+    } else {
+      block.style.display = 'none';
+    }
+
+    const defaultRounds = `
+      <table>
+        <tr><th>Item</th><th>Frequency</th><th>Checked By</th><th>Notes</th></tr>
+        <tr><td class="editable">[e.g., Ventilators in use]</td><td class="editable">[e.g., q4h]</td><td class="editable"></td><td class="editable"></td></tr>
+        <tr><td class="editable">[e.g., BiPAP/CPAP units]</td><td class="editable">[fill in]</td><td class="editable"></td><td class="editable"></td></tr>
+        <tr><td class="editable">[e.g., High-flow devices]</td><td class="editable">[fill in]</td><td class="editable"></td><td class="editable"></td></tr>
+        <tr><td class="editable">[e.g., Portable O2 tanks / stock]</td><td class="editable">[fill in]</td><td class="editable"></td><td class="editable"></td></tr>
+        <tr><td class="editable">[e.g., Difficult airway cart]</td><td class="editable">[fill in]</td><td class="editable"></td><td class="editable"></td></tr>
+      </table>
+    `;
+    document.getElementById('equipmentRoundsContent').innerHTML = SITES[key].equipmentRoundsText || defaultRounds;
+
+    document.getElementById('troubleshootingContent').innerHTML = SHARED_TROUBLESHOOTING;
+  }
+
+  function switchSite(key){
+    document.getElementById('siteSelect').value = key;
+    renderStaffing(key);
+    renderContacts(key);
+    renderEquipment(key);
+    document.getElementById('homeSiteName').textContent = SITES[key].name;
+    document.getElementById('revFacility').textContent = SITES[key].facility;
+  }
+
+  switchSite('orange');
+</script>
+
+</body>
+</html>
