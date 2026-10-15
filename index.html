@@ -25,6 +25,8 @@
     --sqis-tint:#ECE8F4;
     --checklist:#2B7A78;
     --checklist-tint:#E2F1F0;
+    --reports:#7A4E2D;
+    --reports-tint:#F3EAE2;
   }
 
   *{box-sizing:border-box;}
@@ -143,6 +145,7 @@
   .tab[data-cat="emergency"] .swatch{background:var(--emergency);}
   .tab[data-cat="sqis"] .swatch{background:var(--sqis);}
   .tab[data-cat="checklist"] .swatch{background:var(--checklist);}
+  .tab[data-cat="reports"] .swatch{background:var(--reports);}
   .tab.sub{margin-left:24px; font-size:14px; padding-top:9px; padding-bottom:9px;}
   .tab.sub .swatch{height:20px;}
 
@@ -205,6 +208,7 @@
   .section[data-cat="emergency"] .cat-eyebrow{background:var(--emergency-tint); color:var(--emergency);}
   .section[data-cat="sqis"] .cat-eyebrow{background:var(--sqis-tint); color:var(--sqis);}
   .section[data-cat="checklist"] .cat-eyebrow{background:var(--checklist-tint); color:var(--checklist);}
+  .section[data-cat="reports"] .cat-eyebrow{background:var(--reports-tint); color:var(--reports);}
 
   .section h2{
     font-size:34px;
@@ -243,6 +247,7 @@
   .section[data-cat="emergency"] .block h3::before{background:var(--emergency);}
   .section[data-cat="sqis"] .block h3::before{background:var(--sqis);}
   .section[data-cat="checklist"] .block h3::before{background:var(--checklist);}
+  .section[data-cat="reports"] .block h3::before{background:var(--reports);}
 
   .note{
     font-size:13px;
@@ -327,6 +332,7 @@
   .section[data-cat="contacts"] ol.steps li{border-left-color:var(--contacts);}
   .section[data-cat="emergency"] ol.steps li{border-left-color:var(--emergency);}
   .section[data-cat="sqis"] ol.steps li{border-left-color:var(--sqis);}
+  .section[data-cat="reports"] ol.steps li{border-left-color:var(--reports);}
   ol.steps li::before{
     content:counter(step);
     position:absolute;
@@ -474,6 +480,9 @@
       <div class="tab" data-cat="staffing" onclick="showSection('staffing', this)">
         <span class="swatch"></span> Daily Staffing
       </div>
+      <div class="tab" data-cat="reports" onclick="showSection('reports', this)">
+        <span class="swatch"></span> Reports
+      </div>
       <div class="tab" data-cat="equipment" onclick="showSection('equipment', this)">
         <span class="swatch"></span> Equipment
       </div>
@@ -522,6 +531,10 @@
         </ul>
       </div>
 
+      <div class="block" style="margin-top:34px;">
+        <h3>Department Goals <span class="site-flag">site-specific</span></h3>
+        <div id="departmentGoalsContent"><p class="note">[No department goals added yet for this site.]</p></div>
+      </div>
     </section>
 
     <!-- ============ SHIFT CHECKLIST ============ -->
@@ -580,9 +593,19 @@
       </div>
     </section>
 
+    <!-- ============ REPORTS ============ -->
+    <section class="section" data-cat="reports" id="reports">
+      <span class="cat-eyebrow">02 — Reports</span>
+      <h2>Reports</h2>
+
+      <div class="block">
+        <div id="reportsContent"><p class="note">[No reports added yet for this site.]</p></div>
+      </div>
+    </section>
+
     <!-- ============ EQUIPMENT ============ -->
     <section class="section" data-cat="equipment" id="equipment">
-      <span class="cat-eyebrow">02 — Equipment</span>
+      <span class="cat-eyebrow">03 — Equipment</span>
       <h2>Equipment</h2>
       <p class="dek">Rounds checklist, inventory par levels, preventive maintenance schedule, and first-line troubleshooting.</p>
 
@@ -615,7 +638,7 @@
 
     <!-- ============ HOSPITAL CONTACTS ============ -->
     <section class="section" data-cat="contacts" id="contacts">
-      <span class="cat-eyebrow">03 — Hospital Contacts</span>
+      <span class="cat-eyebrow">04 — Hospital Contacts</span>
       <h2>Hospital Contacts</h2>
       <p class="dek">Directory grouped by who you'd call and why. Keep pager/cell numbers current — this page is the one most worth double-checking each revision.</p>
 
@@ -653,7 +676,7 @@
 
     <!-- ============ EMERGENCY PROTOCOLS ============ -->
     <section class="section" data-cat="emergency" id="emergency">
-      <span class="cat-eyebrow">04 — Emergency Protocols</span>
+      <span class="cat-eyebrow">05 — Emergency Protocols</span>
       <h2>Emergency Protocols</h2>
       <p class="dek">Role-specific steps for the moments where the guide needs to work at a glance. Verify every step against current hospital policy.</p>
 
@@ -735,7 +758,7 @@
 
     <!-- ============ SQIS ============ -->
     <section class="section" data-cat="sqis" id="sqis">
-      <span class="cat-eyebrow">05 — SQIS</span>
+      <span class="cat-eyebrow">06 — SQIS</span>
       <h2>SQIS</h2>
       <p class="dek">Incident reporting and the SQIS system.</p>
 
@@ -776,6 +799,7 @@
         </ol>
       </div>
     </section>
+
 
   </main>
 </div>
@@ -821,6 +845,17 @@
 
   const SITES = {
     orange: {
+      reportsHtml: `
+        <p><a href="https://healthuci-my.sharepoint.com/:x:/r/personal/irvind_hs_uci_edu/Documents/FY%2027%20Recaptured%20Charges.xlsx?d=w342c20de9caf45b992afd5a0d858533c&csf=1&web=1&e=YLkGaP" target="_blank" rel="noopener" style="color:var(--reports); font-weight:800; font-size:20px; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:4px;">FY 27 Recaptured Charges →</a></p>
+      `,
+      departmentGoalsText: `
+        <ol style="margin:0; padding-left:24px; line-height:1.7;">
+          <li style="margin-bottom:10px;">Maintain an overall hand hygiene compliance rate of ≥ 98% throughout FY27 to reduce the risk of healthcare-associated infections and promote patient safety.</li>
+          <li style="margin-bottom:10px;">Establish glow testing audit form and achieve an overall glow testing pass rate of ≥ 88% from Oct '26 through June 30, 2027.</li>
+          <li style="margin-bottom:10px;">Reduce FY27 Respiratory related ETT Pressure injuries by ≥ 20% compared to FY26 (baseline data of 18 reportables).</li>
+          <li>Establish FY27 baseline for Patient Focused Bronchodilator Protocol utilization, set monthly improvement targets, and report progress at monthly staff meetings, and achieve a minimum of 88% compliance.</li>
+        </ol>
+      `,
       name: "Orange",
       workflowSheetUrl: "https://healthuci.sharepoint.com/:x:/r/sites/GRP-rcssystem/_layouts/15/Doc.aspx?sourcedoc=%7B2D11AAB4-B7A7-471C-9957-EE6B1D7108CB%7D&file=ORA%20LIVE%20workflow.xlsx&action=default&mobileredirect=true",
       facility: "[Facility name]",
@@ -912,6 +947,14 @@
       }
     },
     irvine: { name:"Irvine", facility:"[Facility name]",
+      departmentGoalsText: `
+        <ol style="margin:0; padding-left:24px; line-height:1.7;">
+          <li style="margin-bottom:10px;">Glow light testing: Achieve greater than or equal to 88% overall glow testing pass rate.</li>
+          <li style="margin-bottom:10px;">Achieve Vent order accuracy at 90%.</li>
+          <li style="margin-bottom:10px;">Perform 20 hand hygiene observations every month for FY27 or a total of 200 hand hygiene observations.</li>
+          <li>Achieve and maintain greater than or equal to 90% compliance in daily SBT assessment and documentation for mechanically ventilated patients.</li>
+        </ol>
+      `,
       cancelGuidelinesText: `
         <ul style="margin:0 0 14px 0; padding-left:22px; line-height:1.7;">
           <li>If canceling co-workers, please call them prior to 0430 / 1630.</li>
@@ -960,6 +1003,14 @@
       ] }
     },
     fountainValley: { name:"Fountain Valley", facility:"[Facility name]",
+      departmentGoalsText: `
+        <ol style="margin:0; padding-left:24px; line-height:1.7;">
+          <li style="margin-bottom:10px;">Increase RT hand hygiene compliance (WHO 5 Moments) from 50% to 90% or higher.</li>
+          <li style="margin-bottom:10px;">Complete 95% or more of assigned UCLC courses by their deadlines from October 2026 through June 2027.</li>
+          <li style="margin-bottom:10px;">Use all five AIDET elements (Acknowledge, Introduce, Duration, Explanation, Thank you) in 90% or more of bedside treatment interactions.</li>
+          <li>Report critical ABG values within 15 minutes of analysis for 98% or more of results each month from October 2026 through June 2027.</li>
+        </ol>
+      `,
       staffingGuidelinesText: `
         <ul style="margin:0; padding-left:22px; line-height:1.7;">
           <li>Mid-shift, get a count from staff to fill in procedure counts and calculate needed staff for the upcoming shift.</li>
@@ -1004,6 +1055,13 @@
       ], biomed:[{org:"Biomed Engineering", name:"[name]", phone:"[#]", covers:"[all equipment]"}] }
     },
     lakewood: { name:"Lakewood", facility:"[Facility name]",
+      departmentGoalsText: `
+        <ol style="margin:0; padding-left:24px; line-height:1.7;">
+          <li style="margin-bottom:12px;">Maintain the Productivity Percentage of &gt;100%.</li>
+          <li style="margin-bottom:12px;">Report Critical Values within 15 minutes of analysis. To maintain 98-100%.</li>
+          <li style="">Complete all UCLC education by deadlines as a Department.</li>
+        </ol>
+      `,
       staffingGuidelinesText: `
         <ul style="margin:0; padding-left:22px; line-height:1.7;">
           <li>Mid-shift, get a count from staff to fill in procedure counts and calculate needed staff for the upcoming shift.</li>
@@ -1053,6 +1111,13 @@
       ] }
     },
     losAlamitos: { name:"Los Alamitos", facility:"[Facility name]",
+      departmentGoalsText: `
+        <ol style="margin:0; padding-left:24px; line-height:1.7;">
+          <li style="margin-bottom:12px;"><strong>Maintain Productivity Performance</strong><br>Maintain a productivity percentage of 100% or greater each month.</li>
+          <li style="margin-bottom:12px;"><strong>Ensure Compliance with Skin Breakdown Prevention Practices</strong><br>Maintain 95% or greater compliance with skin breakdown prevention policies and procedures for patients utilizing devices such as BiPAP, ETT, and other high-risk equipment.</li>
+          <li style=""><strong>Complete Required UCLC Education</strong><br>Achieve &gt; 95% completion of all required UCLC education and training modules by established deadlines for the department.</li>
+        </ol>
+      `,
       equipmentRoundsText: `
         <ul style="margin:0; padding-left:22px; line-height:1.8;">
           <li>Ensure there is adequate clean and set up equipment for oncoming shift.</li>
@@ -1096,6 +1161,14 @@
       ], biomed:[{org:"Biomed Engineering", name:"", phone:"562-799-3175", covers:"[all equipment]"}] }
     },
     placentiaLinda: { name:"Placentia Linda", facility:"[Facility name]",
+      departmentGoalsText: `
+        <ol style="margin:0; padding-left:24px; line-height:1.7;">
+          <li style="margin-bottom:10px;">Increase RT hand hygiene compliance (WHO 5 Moments) from 50% to 90% or higher.</li>
+          <li style="margin-bottom:10px;">Complete 95% or more of assigned UCLC courses by their deadlines.</li>
+          <li style="margin-bottom:10px;">Use all five AIDET elements (Acknowledge, Introduce, Duration, Explanation, Thank you) in 90% or more of bedside treatment interactions.</li>
+          <li>Report critical ABG values within 15 minutes of analysis for 98% or more of results each month.</li>
+        </ol>
+      `,
       staffingGuidelinesText: `
         <ul style="margin:0; padding-left:22px; line-height:1.7;">
           <li>Mid-shift, get a count from staff to fill in procedure counts and calculate needed staff for the upcoming shift.</li>
@@ -1224,6 +1297,10 @@
     renderEquipment(key);
     document.getElementById('homeSiteName').textContent = SITES[key].name;
     document.getElementById('revFacility').textContent = SITES[key].facility;
+    document.getElementById('reportsContent').innerHTML = SITES[key].reportsHtml
+      || '<p class="note">[No reports added yet for this site.]</p>';
+    document.getElementById('departmentGoalsContent').innerHTML = SITES[key].departmentGoalsText
+      || '<p class="note">[No department goals added yet for this site.]</p>';
   }
 
   switchSite('orange');
